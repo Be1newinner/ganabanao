@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand";
+import { CurrentYear } from "@/components/current-year";
 import { SITE_NAME } from "@/lib/config";
 
 const LINKS = [
@@ -18,7 +19,7 @@ export function SiteFooter() {
         <div className="space-y-2">
           <Logo />
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} {SITE_NAME}. All music on this site is AI-generated.
+            © <CurrentYear /> {SITE_NAME}. All music on this site is AI-generated.
           </p>
         </div>
         <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">

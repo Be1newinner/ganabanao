@@ -1,8 +1,11 @@
 "use client";
 
+import { CircleCheck, CircleX } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Alert, LinkButton, Spinner } from "@/components/ui";
+import { Spinner } from "@/components/common";
+import { Button } from "@/components/ui/button";
 import { api, ApiError } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import type { User } from "@/lib/types";
@@ -33,23 +36,31 @@ export function VerifyEmail() {
 
   return (
     <div className="text-center">
-      <h1 className="mb-4 text-xl font-semibold">Verify your email</h1>
-      {state.status === "working" && <Spinner />}
+      {state.status === "working" && (
+        <>
+          <Spinner className="mx-auto size-8 text-primary" />
+          <p className="mt-4 text-muted-foreground">Verifying your email…</p>
+        </>
+      )}
       {state.status === "done" && (
         <>
-          <Alert tone="success">{state.message}</Alert>
-          <LinkButton href={user ? "/dashboard" : "/login"} className="mt-6 w-full">
-            {user ? "Go to dashboard" : "Log in"}
-          </LinkButton>
+          <CircleCheck className="mx-auto size-14 text-success" />
+          <h1 className="mt-4 font-display text-2xl font-bold">Email verified</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{state.message}</p>
+          <Button variant="brand" size="xl" className="mt-8 w-full" asChild>
+            <Link href={user ? "/create" : "/login"}>{user ? "Create your first song" : "Log in"}</Link>
+          </Button>
         </>
       )}
       {state.status === "error" && (
         <>
-          <Alert tone="error">{state.message}</Alert>
-          <p className="mt-4 text-sm text-muted">You can ask for a new link from your dashboard.</p>
-          <LinkButton href="/dashboard" variant="secondary" className="mt-4 w-full">
-            Go to dashboard
-          </LinkButton>
+          <CircleX className="mx-auto size-14 text-destructive" />
+          <h1 className="mt-4 font-display text-2xl font-bold">Link not valid</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{state.message}</p>
+          <p className="mt-1 text-sm text-muted-foreground">You can ask for a new link from your dashboard.</p>
+          <Button variant="outline" size="xl" className="mt-8 w-full" asChild>
+            <Link href="/dashboard">Go to dashboard</Link>
+          </Button>
         </>
       )}
     </div>

@@ -1,8 +1,12 @@
 "use client";
 
+import { CircleCheck } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Alert, Button, Field, Input, LinkButton } from "@/components/ui";
+import { FormField, Notice, Spinner } from "@/components/common";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useFormSubmit } from "@/components/use-form";
 import { api } from "@/lib/api";
 
@@ -22,29 +26,30 @@ export function ResetPasswordForm() {
     if (res) setDone(res.message);
   }
 
-  if (!token) return <Alert tone="error">This link is missing its token. Open the link from your email again.</Alert>;
+  if (!token) return <Notice tone="error">This link is missing its token. Open the link from your email again.</Notice>;
   if (done) {
     return (
-      <>
-        <Alert tone="success">{done}</Alert>
-        <LinkButton href="/login" className="mt-6 w-full">
-          Log in
-        </LinkButton>
-      </>
+      <div className="text-center">
+        <CircleCheck className="mx-auto size-14 text-success" />
+        <p className="mt-4 text-sm text-muted-foreground">{done}</p>
+        <Button variant="brand" size="xl" className="mt-8 w-full" asChild>
+          <Link href="/login">Log in</Link>
+        </Button>
+      </div>
     );
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
-      {error && <Alert tone="error">{error}</Alert>}
-      <Field label="New password" htmlFor="password" error={fieldErrors.password} hint="At least 8 characters">
-        <Input id="password" name="password" type="password" autoComplete="new-password" minLength={8} required />
-      </Field>
-      <Field label="Confirm new password" htmlFor="confirm">
-        <Input id="confirm" name="confirm" type="password" autoComplete="new-password" required />
-      </Field>
-      <Button type="submit" className="w-full" loading={busy}>
-        Save password
+      {error && <Notice tone="error">{error}</Notice>}
+      <FormField label="New password" htmlFor="password" error={fieldErrors.password} hint="At least 8 characters">
+        <Input id="password" name="password" type="password" autoComplete="new-password" minLength={8} required className="h-11" />
+      </FormField>
+      <FormField label="Confirm new password" htmlFor="confirm">
+        <Input id="confirm" name="confirm" type="password" autoComplete="new-password" required className="h-11" />
+      </FormField>
+      <Button type="submit" variant="brand" size="xl" className="w-full" disabled={busy}>
+        {busy && <Spinner />} Save password
       </Button>
     </form>
   );

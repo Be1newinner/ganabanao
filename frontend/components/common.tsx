@@ -1,5 +1,6 @@
-import { Loader2 } from "lucide-react";
+import { CircleAlert, CircleCheck, Info, Loader2 } from "lucide-react";
 import type { ReactNode } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -111,6 +112,47 @@ export function FormField({
         <p className="text-xs text-muted-foreground">{hint}</p>
       ) : null}
     </div>
+  );
+}
+
+/** Selectable pill, for style tags in the create forms. */
+export function Chip({
+  selected,
+  onClick,
+  children,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={onClick}
+      className={cn(
+        "rounded-full border px-3 py-1.5 text-sm transition-all",
+        selected
+          ? "border-transparent bg-brand-gradient font-medium text-white shadow-md shadow-brand-2/20"
+          : "bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+/** Inline message for forms and pages, on top of shadcn's Alert. */
+export function Notice({ tone = "info", children }: { tone?: "info" | "error" | "success"; children: ReactNode }) {
+  const Icon = tone === "error" ? CircleAlert : tone === "success" ? CircleCheck : Info;
+  return (
+    <Alert
+      variant={tone === "error" ? "destructive" : "default"}
+      className={cn(tone === "success" && "text-success", tone === "info" && "bg-muted/50")}
+    >
+      <Icon />
+      <AlertDescription className={cn(tone === "success" && "text-success")}>{children}</AlertDescription>
+    </Alert>
   );
 }
 

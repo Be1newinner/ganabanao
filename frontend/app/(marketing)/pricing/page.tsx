@@ -5,10 +5,17 @@ export const metadata: Metadata = { title: "Pricing" };
 
 export default function PricingPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-14">
-      <h1 className="text-3xl font-semibold tracking-tight">Pricing</h1>
-      <p className="mt-2 text-muted">Every song, remix and stem download uses credits. Pick a monthly plan or buy a pack.</p>
-      <div className="mt-10">
+    <div className="relative">
+      <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-96 bg-aurora" />
+      <div className="mx-auto max-w-6xl px-4 py-16">
+        <div className="mb-14 text-center">
+          <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+            Simple, <span className="text-brand-gradient">credit-based</span> pricing
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+            Every song, remix and stem download uses credits. Pick a monthly plan or top up with a pack.
+          </p>
+        </div>
         <PricingTable />
       </div>
     </div>
