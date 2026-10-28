@@ -3,10 +3,9 @@
 import { AlertCircle, Download, FileAudio, Layers, MoreHorizontal, Pause, Pencil, Play, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Spinner, StatusBadge } from "@/components/common";
+import { Spinner } from "@/components/common";
 import { CoverArt, Equalizer } from "@/components/cover-art";
 import { usePlayer } from "@/components/player/player-provider";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,14 +33,18 @@ import { StemsDialog } from "./stems-dialog";
 export const isActive = (s: Song) =>
   s.status === "queued" || s.status === "generating" || s.stems.status === "queued" || s.stems.status === "generating";
 
-const songTags = (song: Song): string[] =>
-  [
-    song.feature === "remix" ? "Similar song" : song.input?.language,
-    song.input?.genre,
+/** "Kajri, romantic, female voice" — plain words, duplicates removed (genre and mood can match). */
+export const describeSong = (song: Song): string => {
+  const parts = [
+    song.feature === "remix" ? "Similar song" : song.input?.genre,
     song.input?.mood,
-    song.input?.vocal && (song.input.vocal === "instrumental" ? "Instrumental" : `${song.input.vocal} vocal`),
-    song.input?.taal,
+    song.input?.vocal && (song.input.vocal === "instrumental" ? "instrumental" : `${song.input.vocal} voice`),
+    song.input?.taal && `${song.input.taal} taal`,
   ].filter((t): t is string => !!t);
+  const seen = new Set<string>();
+  const unique = parts.filter((p) => !seen.has(p.toLowerCase()) && seen.add(p.toLowerCase()));
+  return unique.map((p, i) => (i === 0 ? p : p.toLowerCase())).join(", ") || song.input?.language || "Song";
+};
 
 /**
  * One song in the library (FR-3.6, FR-6.1, FR-6.4). Plays in the global player,
@@ -49,11 +52,14 @@ const songTags = (song: Song): string[] =>
  */
 export function SongRow({
   song,
+  index,
   stemsCost,
   onChange,
   onDelete,
 }: {
   song: Song;
+  /** Track number, shown when the list is a tracklist */
+  index?: number;
   stemsCost?: number;
   onChange: (song: Song) => void;
   onDelete: (id: string) => void;
@@ -73,7 +79,7 @@ export function SongRow({
     player.play({
       id: song.id,
       title: song.title,
-      subtitle: songTags(song).slice(0, 3).join(" · "),
+      subtitle: describeSong(song),
       src: song.audio.streamUrl,
       coverSeed: song.id,
       downloadUrl: song.audio.downloadUrl,
@@ -83,75 +89,70 @@ export function SongRow({
   return (
     <div
       className={cn(
-        "group flex items-center gap-4 rounded-xl p-2 pr-3 transition-colors hover:bg-card",
-        current && "bg-card"
+        "group flex items-center gap-4 border-b border-border py-3 pr-1 last:border-b-0",
+        current && "bg-haldi/8"
       )}
     >
-      <CoverArt seed={song.id} className="size-16 sm:size-18">
+      {index !== undefined && (
+        <span className="hidden w-6 text-right font-display text-xl text-muted-foreground tabular-nums sm:block">
+          {playing ? <Equalizer className="ml-auto text-sindoor" /> : index}
+        </span>
+      )}
+
+      <CoverArt seed={song.id} className="size-14 sm:size-16" sizes="64px">
         {ready ? (
           <button
             type="button"
             onClick={play}
             aria-label={`${playing ? "Pause" : "Play"} ${song.title}`}
             className={cn(
-              "absolute inset-0 grid place-items-center bg-black/35 text-white transition-opacity",
+              "absolute inset-0 grid place-items-center bg-kajal/45 text-white transition-opacity",
               playing ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
             )}
           >
-            {playing ? <Pause className="size-6 fill-current" /> : <Play className="ml-0.5 size-6 fill-current" />}
+            {playing ? <Pause className="size-5 fill-current" /> : <Play className="ml-0.5 size-5 fill-current" />}
           </button>
         ) : (
-          <div className="absolute inset-0 grid place-items-center bg-black/45 text-white">
+          <div className="absolute inset-0 grid place-items-center bg-kajal/55 text-white">
             {working ? <Spinner className="size-5" /> : <AlertCircle className="size-5" />}
           </div>
         )}
       </CoverArt>
 
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          {playing && <Equalizer className="text-primary" />}
-          <button
-            type="button"
-            onClick={play}
-            disabled={!ready}
-            className={cn("truncate text-left font-medium", ready && "hover:underline", current && "text-primary")}
-          >
-            {song.title}
-          </button>
-          {song.stems.status === "done" && (
-            <Badge variant="outline" className="hidden gap-1 sm:inline-flex">
-              <Layers className="size-3" /> {song.stems.tracks.length} stems
-            </Badge>
+        <button
+          type="button"
+          onClick={play}
+          disabled={!ready}
+          className={cn(
+            "block max-w-full truncate text-left text-base font-semibold",
+            ready && "hover:underline",
+            current && "text-sindoor"
           )}
-        </div>
-        <div className="mt-1 flex flex-wrap gap-1.5">
-          {songTags(song).map((tag) => (
-            <span key={tag} className="rounded-md bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground capitalize">
-              {tag}
-            </span>
-          ))}
-        </div>
+        >
+          {song.title}
+        </button>
+        <p className="truncate text-sm text-muted-foreground">
+          {describeSong(song)}
+          {song.stems.status === "done" && `, ${song.stems.tracks.length} stems ready`}
+        </p>
         {working && (
-          <p className="mt-1.5 text-xs text-muted-foreground">
+          <p className="mt-1 text-sm text-warning">
             {song.queue?.position
-              ? `Position ${song.queue.position} in line · ${formatWait(song.queue.estimatedWaitSeconds)}`
-              : "Creating your song · usually a few minutes"}
+              ? `Number ${song.queue.position} in line, ${formatWait(song.queue.estimatedWaitSeconds)}`
+              : "Being made now. This usually takes a few minutes."}
           </p>
         )}
         {song.status === "failed" && (
-          <p className="mt-1.5 text-xs text-destructive">
+          <p className="mt-1 text-sm text-destructive">
             {song.error ?? "This song could not be made. Your credits have been returned."}
           </p>
         )}
       </div>
 
-      <div className="hidden w-28 flex-col items-end gap-1 text-right md:flex">
-        {working || song.status === "failed" ? (
-          <StatusBadge status={song.status} />
-        ) : (
-          <span className="text-sm tabular-nums text-muted-foreground">{formatDuration(song.durationMs)}</span>
-        )}
-        <span className="text-[11px] text-muted-foreground">{formatDateTime(song.createdAt)}</span>
+      <div className="hidden w-32 text-right md:block">
+        <p className="text-sm tabular-nums">{ready ? formatDuration(song.durationMs) : ""}</p>
+        <p className="text-xs text-muted-foreground">{formatDateTime(song.createdAt)}</p>
       </div>
 
       {ready && (

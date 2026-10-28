@@ -39,6 +39,9 @@ const readDuration = (file: File): Promise<number> =>
     audio.src = url;
   });
 
+/** FR-4.1 limits (Mureka V8), used if the API does not send its own */
+const DEFAULT_LIMITS = { minSeconds: 10, maxSeconds: 350, maxBytes: 10 * 1024 * 1024 };
+
 const minSec = (s: number) => `${Math.floor(s / 60)} min${s % 60 ? ` ${s % 60} s` : ""}`;
 const mb = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 
@@ -61,7 +64,8 @@ export default function RemixPage() {
 
   if (settings.loading) return <PageLoader />;
   if (!settings.data) return <Notice tone="error">Could not load the form. {settings.error?.message}</Notice>;
-  const { remix: limits, creditCosts } = settings.data;
+  const { creditCosts } = settings.data;
+  const limits = settings.data.remix ?? DEFAULT_LIMITS;
   const cost = creditCosts.remix;
   const tooFew = (user?.credits ?? 0) < cost;
 

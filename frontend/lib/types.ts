@@ -77,7 +77,8 @@ export interface PublicSettings {
   creditCosts: CreditCosts;
   options: { genres: string[]; moods: string[]; taals: string[]; instruments: string[] };
   stemModel: string;
-  remix: { minSeconds: number; maxSeconds: number; maxBytes: number };
+  /** Absent from older API versions; the remix page falls back to the spec limits */
+  remix?: { minSeconds: number; maxSeconds: number; maxBytes: number };
 }
 
 export interface Catalog {

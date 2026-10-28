@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Hind, Rozha_One } from "next/font/google";
 import { PlayerProvider } from "@/components/player/player-provider";
 import { ThemeProvider } from "@/components/theme";
 import { Toaster } from "@/components/ui/sonner";
@@ -8,9 +8,10 @@ import { SITE_NAME } from "@/lib/config";
 import { SessionProvider } from "@/lib/session";
 import "./globals.css";
 
-const sans = Geist({ variable: "--font-sans", subsets: ["latin"] });
+// Hind (body) and Rozha One (display) both cover Devanagari, so lyrics in Hindi script render properly
+const sans = Hind({ variable: "--font-sans", subsets: ["latin", "devanagari"], weight: ["400", "500", "600", "700"] });
+const display = Rozha_One({ variable: "--font-display", subsets: ["latin", "devanagari"], weight: "400" });
 const mono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-const display = Bricolage_Grotesque({ variable: "--font-display", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: { default: `${SITE_NAME} — Bhojpuri AI music`, template: `%s · ${SITE_NAME}` },
@@ -20,8 +21,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fdfcf9" },
-    { media: "(prefers-color-scheme: dark)", color: "#121019" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f6f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#141a3a" },
   ],
 };
 

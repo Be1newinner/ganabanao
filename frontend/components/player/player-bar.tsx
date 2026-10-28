@@ -23,11 +23,11 @@ export function PlayerBar({ className }: { className?: string }) {
     >
       {/* Thin progress line on top, useful on phones where the slider is hidden */}
       <div className="h-0.5 bg-muted sm:hidden">
-        <div className="h-full bg-brand-gradient" style={{ width: p.duration ? `${(p.time / p.duration) * 100}%` : 0 }} />
+        <div className="h-full bg-sindoor" style={{ width: p.duration ? `${(p.time / p.duration) * 100}%` : 0 }} />
       </div>
       <div className="mx-auto flex h-18 max-w-screen-2xl items-center gap-3 px-3 sm:gap-5 sm:px-5">
         <div className="flex min-w-0 flex-1 items-center gap-3 sm:w-72 sm:flex-none">
-          <CoverArt seed={track.coverSeed} className="size-11" rounded="rounded-md" />
+          <CoverArt seed={track.coverSeed} className="size-11" sizes="44px" />
           <div className="min-w-0">
             <p className="truncate text-sm font-medium">{track.title}</p>
             <p className="truncate text-xs text-muted-foreground">{p.error ?? track.subtitle}</p>
@@ -37,7 +37,7 @@ export function PlayerBar({ className }: { className?: string }) {
         <div className="flex flex-none items-center gap-3 sm:flex-1">
           <Button
             size="icon-lg"
-            className="size-10 rounded-full bg-foreground text-background hover:bg-foreground/85"
+            className="size-10 rounded-full bg-sindoor text-primary-foreground hover:bg-[color-mix(in_oklab,var(--sindoor),black_14%)]"
             onClick={p.toggle}
             aria-label={p.playing ? "Pause" : "Play"}
           >

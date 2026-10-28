@@ -13,10 +13,10 @@ export function useSongs(path: string) {
 
 export function SongListSkeleton({ rows = 4 }: { rows?: number }) {
   return (
-    <div className="space-y-2">
+    <div>
       {Array.from({ length: rows }, (_, i) => (
-        <div key={i} className="flex items-center gap-4 p-2">
-          <Skeleton className="size-16 rounded-lg sm:size-18" />
+        <div key={i} className="flex items-center gap-4 border-b py-3 last:border-b-0">
+          <Skeleton className="size-14 rounded-sm sm:size-16" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-1/3" />
             <Skeleton className="h-3 w-1/2" />
@@ -33,23 +33,29 @@ export function SongList({
   error,
   setSongs,
   empty,
+  numbered,
+  startIndex = 1,
 }: {
   songs: Song[] | undefined;
   loading: boolean;
   error?: { message: string };
   setSongs: (fn: (songs: Song[] | undefined) => Song[] | undefined) => void;
   empty: ReactNode;
+  /** Show track numbers, as on an album inlay */
+  numbered?: boolean;
+  startIndex?: number;
 }) {
   const settings = useApi<PublicSettings>("/settings");
   if (loading && !songs) return <SongListSkeleton />;
   if (error && !songs) return <p className="text-sm text-destructive">{error.message}</p>;
   if (!songs?.length) return <>{empty}</>;
   return (
-    <div className="space-y-1">
-      {songs.map((song) => (
+    <div>
+      {songs.map((song, i) => (
         <SongRow
           key={song.id}
           song={song}
+          index={numbered ? startIndex + i : undefined}
           stemsCost={settings.data?.creditCosts.stems}
           onChange={(updated) => setSongs((list) => list?.map((s) => (s.id === updated.id ? updated : s)))}
           onDelete={(id) => setSongs((list) => list?.filter((s) => s.id !== id))}

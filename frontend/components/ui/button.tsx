@@ -18,9 +18,11 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        // Project addition: gradient call-to-action
+        // Project addition: the sindoor call-to-action (flat pigment, no glow)
         brand:
-          "bg-brand-gradient text-white shadow-lg shadow-brand-2/25 hover:brightness-110 hover:shadow-brand-2/40",
+          "bg-sindoor text-primary-foreground hover:bg-[color-mix(in_oklab,var(--sindoor),black_14%)]",
+        // Project addition: action placed on the red shell (haldi on sindoor)
+        shell: "bg-haldi text-kajal hover:bg-[color-mix(in_oklab,var(--haldi),black_10%)]",
       },
       size: {
         default:
@@ -29,7 +31,7 @@ const buttonVariants = cva(
         sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         // Project addition: large call-to-action
-        xl: "h-11 gap-2 rounded-xl px-5 text-sm",
+        xl: "h-11 gap-2 rounded-md px-5 text-[15px] font-semibold",
         icon: "size-8",
         "icon-xs":
           "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",

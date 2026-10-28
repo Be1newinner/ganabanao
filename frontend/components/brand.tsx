@@ -1,16 +1,22 @@
-import { AudioWaveform } from "lucide-react";
 import Link from "next/link";
 import { SITE_NAME } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
-/** Placeholder logo until the client supplies theirs (FR-1.1). */
+/** Wordmark in the display face. A placeholder until the client supplies the logo (FR-1.1). */
 export function Logo({ className, href = "/" }: { className?: string; href?: string }) {
   return (
-    <Link href={href} className={cn("flex items-center gap-2.5 font-display text-lg font-bold tracking-tight", className)}>
-      <span aria-hidden className="grid size-8 place-items-center rounded-lg bg-brand-gradient shadow-lg shadow-brand-2/30">
-        <AudioWaveform className="size-4.5 text-white" />
-      </span>
+    <Link href={href} className={cn("font-display text-[1.65rem] leading-none text-sindoor", className)}>
       {SITE_NAME}
     </Link>
+  );
+}
+
+/** The Madhubani border band (public/art/border-strip.jpg), repeated across its width. */
+export function BorderStrip({ className }: { className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={cn("h-4 bg-[url(/art/border-strip.jpg)] bg-[length:auto_100%] bg-repeat-x dark:opacity-80", className)}
+    />
   );
 }

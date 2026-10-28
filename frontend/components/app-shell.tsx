@@ -7,16 +7,15 @@ import {
   Library,
   LogOut,
   Menu,
+  PenLine,
   Repeat2,
-  Sparkles,
   UserRound,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { Logo } from "@/components/brand";
+import { BorderStrip, Logo } from "@/components/brand";
 import { PageLoader } from "@/components/common";
 import { PlayerBar } from "@/components/player/player-bar";
 import { usePlayer } from "@/components/player/player-provider";
@@ -39,10 +38,10 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/dashboard", label: "Home", icon: Home },
-  { href: "/create", label: "Create", icon: Sparkles },
+  { href: "/create", label: "Write a song", icon: PenLine },
   { href: "/remix", label: "Similar song", icon: Repeat2 },
   { href: "/songs", label: "Library", icon: Library },
-  { href: "/billing", label: "Credits & plans", icon: CreditCard },
+  { href: "/billing", label: "Credits and plans", icon: CreditCard },
 ];
 
 const initials = (name: string) =>
@@ -59,16 +58,16 @@ function SidebarContent({ user, onNavigate }: { user: User; onNavigate?: () => v
   const { logout } = useSession();
 
   return (
-    <div className="flex h-full flex-col gap-6 p-4">
-      <Logo href="/dashboard" className="px-2 pt-1" />
+    <div className="flex h-full flex-col gap-7 px-4 py-6 text-sidebar-foreground">
+      <Logo href="/dashboard" className="px-2 text-sidebar-foreground" />
 
-      <Button variant="brand" size="xl" className="w-full" asChild>
+      <Button variant="shell" size="xl" className="w-full" asChild>
         <Link href="/create" onClick={onNavigate}>
-          <Sparkles /> Create a song
+          <PenLine /> New song
         </Link>
       </Button>
 
-      <nav className="space-y-1">
+      <nav className="space-y-0.5">
         {NAV.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (
@@ -76,50 +75,48 @@ function SidebarContent({ user, onNavigate }: { user: User; onNavigate?: () => v
               key={href}
               href={href}
               onClick={onNavigate}
+              aria-current={active ? "page" : undefined}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                "flex items-center gap-3 rounded-md px-3 py-2 text-[15px] transition-colors",
                 active
-                  ? "bg-sidebar-accent font-medium text-foreground"
-                  : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground"
+                  ? "bg-sidebar-accent font-semibold text-sidebar-accent-foreground"
+                  : "text-shell-muted hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground"
               )}
             >
-              <Icon className={cn("size-4", active && "text-primary")} />
+              <Icon className={cn("size-[18px]", active && "text-haldi")} />
               {label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-auto space-y-3">
-        <Link
-          href="/billing"
-          onClick={onNavigate}
-          className="block rounded-xl border bg-linear-to-br from-brand-1/15 via-brand-2/10 to-brand-3/15 p-4 transition-colors hover:border-primary/40"
-        >
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            Credits
-            <Zap className="size-3.5 text-primary" />
-          </div>
-          <p className="mt-1 font-display text-2xl font-bold">{user.credits}</p>
-          <p className="mt-1 text-xs text-primary">Get more credits →</p>
-        </Link>
+      <div className="mt-auto space-y-4">
+        <div className="px-3">
+          <p className="font-display text-4xl leading-none text-haldi">{user.credits}</p>
+          <p className="mt-1 text-sm text-shell-muted">credits left</p>
+          <Link
+            href="/billing"
+            onClick={onNavigate}
+            className="mt-2 inline-block text-sm font-semibold underline decoration-haldi decoration-2 underline-offset-4 hover:text-haldi"
+          >
+            Add credits
+          </Link>
+        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-sidebar-accent/60"
+              className="flex w-full items-center gap-3 rounded-md border-t border-sidebar-border p-2 pt-4 text-left hover:bg-sidebar-accent/70"
             >
               <Avatar className="size-8">
-                <AvatarFallback className="bg-brand-gradient text-xs font-semibold text-white">
-                  {initials(user.name)}
-                </AvatarFallback>
+                <AvatarFallback className="bg-haldi text-xs font-semibold text-kajal">{initials(user.name)}</AvatarFallback>
               </Avatar>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-medium">{user.name}</span>
-                <span className="block truncate text-xs text-muted-foreground">{user.email}</span>
+                <span className="block truncate text-xs text-shell-muted">{user.email}</span>
               </span>
-              <ChevronsUpDown className="size-4 text-muted-foreground" />
+              <ChevronsUpDown className="size-4 text-shell-muted" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="start" className="w-56">
@@ -132,7 +129,7 @@ function SidebarContent({ user, onNavigate }: { user: User; onNavigate?: () => v
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/billing" onClick={onNavigate}>
-                <CreditCard /> Credits & plans
+                <CreditCard /> Credits and plans
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -167,41 +164,48 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-svh">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-sidebar-border bg-sidebar lg:block">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 bg-sidebar lg:block">
         <SidebarContent user={user} />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-2 border-b bg-background/80 px-4 backdrop-blur-xl sm:px-8">
-          <div className="flex items-center gap-2 lg:hidden">
-            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open menu">
-                  <Menu />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-72 bg-sidebar p-0">
-                <SheetTitle className="sr-only">Menu</SheetTitle>
-                <SidebarContent user={user} onNavigate={() => setSheetOpen(false)} />
-              </SheetContent>
-            </Sheet>
-            <Logo href="/dashboard" />
+        <header className="sticky top-0 z-20 bg-sidebar text-sidebar-foreground">
+          <div className="flex h-14 items-center justify-between gap-2 px-4 sm:px-8">
+            <div className="flex items-center gap-2 lg:hidden">
+              <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Open menu"
+                    className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  >
+                    <Menu />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-72 border-sidebar-border bg-sidebar p-0 text-sidebar-foreground">
+                  <SheetTitle className="sr-only">Menu</SheetTitle>
+                  <SidebarContent user={user} onNavigate={() => setSheetOpen(false)} />
+                </SheetContent>
+              </Sheet>
+              <Logo href="/dashboard" className="text-2xl text-sidebar-foreground" />
+            </div>
+            <div className="ml-auto flex items-center gap-3">
+              <Link href="/billing" className="text-sm text-shell-muted hover:text-sidebar-foreground lg:hidden">
+                <span className="font-semibold text-haldi">{user.credits}</span> credits
+              </Link>
+              <ThemeToggle className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
+            </div>
           </div>
-          <div className="ml-auto flex items-center gap-2">
-            <Link
-              href="/billing"
-              className="flex items-center gap-1.5 rounded-full bg-primary/12 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
-            >
-              <Zap className="size-3.5" /> {user.credits} credits
-            </Link>
-            <ThemeToggle />
-          </div>
+          <BorderStrip />
         </header>
 
-        <main className={cn("mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8", track && "pb-28")}>
+        <main className={cn("mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8 lg:py-10", track && "pb-28")}>
           {!user.emailVerified && <VerifyBanner />}
           {children}
         </main>
+
+        <AppFooter className={cn(track && "pb-20")} />
       </div>
 
       <PlayerBar className="lg:left-64" />
@@ -209,13 +213,36 @@ export function AppShell({ children }: { children: ReactNode }) {
   );
 }
 
+/** Red footer band, matching the shell (NFR-21: states the music is AI-generated). */
+function AppFooter({ className }: { className?: string }) {
+  return (
+    <footer className={cn("bg-sidebar text-sidebar-foreground", className)}>
+      <BorderStrip />
+      <div className="flex flex-col gap-3 px-4 py-6 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <p className="text-shell-muted">All music made here is AI-generated.</p>
+        <nav className="flex flex-wrap gap-x-5 gap-y-1">
+          {[
+            ["/terms", "Terms"],
+            ["/privacy", "Privacy"],
+            ["/refund-policy", "Refunds"],
+            ["/contact", "Contact"],
+          ].map(([href, label]) => (
+            <Link key={href} href={href} className="text-shell-muted hover:text-sidebar-foreground hover:underline">
+              {label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </footer>
+  );
+}
+
 function VerifyBanner() {
   const [busy, setBusy] = useState(false);
   return (
-    <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm">
+    <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-md border-l-4 border-haldi bg-haldi/10 px-4 py-3 text-sm">
       <span>
-        <span className="font-medium text-warning">Verify your email</span> to start creating songs. Check your inbox for
-        the link.
+        <span className="font-semibold">Verify your email</span> to start making songs. The link is in your inbox.
       </span>
       <Button
         size="sm"
@@ -225,7 +252,7 @@ function VerifyBanner() {
           setBusy(true);
           try {
             await api.post("/auth/resend-verification");
-            toast.success("A new verification link is on its way.");
+            toast.success("Verification email sent.");
           } catch (err) {
             toast.error(err instanceof Error ? err.message : "Could not send the email.");
           } finally {
@@ -233,7 +260,7 @@ function VerifyBanner() {
           }
         }}
       >
-        Resend link
+        Send a new link
       </Button>
     </div>
   );
