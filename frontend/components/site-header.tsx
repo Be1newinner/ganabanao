@@ -1,43 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { SITE_NAME } from "@/lib/config";
+import { Logo } from "@/components/brand";
+import { ThemeToggle } from "@/components/theme";
+import { Button } from "@/components/ui/button";
 import { useSession } from "@/lib/session";
-import { LinkButton } from "./ui";
 
-export function Logo() {
-  return (
-    <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-      <span aria-hidden className="grid size-8 place-items-center rounded-lg bg-brand text-white">♪</span>
-      {SITE_NAME}
-    </Link>
-  );
-}
-
+/** Header for the public pages. */
 export function SiteHeader() {
   const { user } = useSession();
   return (
-    <header className="border-b border-border bg-background/90 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-transparent bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
         <Logo />
         <nav className="flex items-center gap-1 sm:gap-2">
-          <Link href="/pricing" className="rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
-            Pricing
-          </Link>
+          <Button variant="ghost" size="lg" asChild>
+            <Link href="/pricing">Pricing</Link>
+          </Button>
           {user ? (
-            <LinkButton href="/dashboard" size="sm">
-              Dashboard
-            </LinkButton>
+            <Button variant="brand" size="lg" asChild>
+              <Link href="/dashboard">Open app</Link>
+            </Button>
           ) : (
             <>
-              <Link href="/login" className="rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
-                Log in
-              </Link>
-              <LinkButton href="/signup" size="sm">
-                Sign up
-              </LinkButton>
+              <Button variant="ghost" size="lg" asChild className="hidden sm:inline-flex">
+                <Link href="/login">Log in</Link>
+              </Button>
+              <Button variant="brand" size="lg" asChild>
+                <Link href="/signup">Start creating</Link>
+              </Button>
             </>
           )}
+          <ThemeToggle />
         </nav>
       </div>
     </header>

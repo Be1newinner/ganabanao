@@ -20,6 +20,7 @@ import { Logo } from "@/components/brand";
 import { PageLoader } from "@/components/common";
 import { PlayerBar } from "@/components/player/player-bar";
 import { usePlayer } from "@/components/player/player-provider";
+import { ThemeToggle } from "@/components/theme";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -93,7 +94,7 @@ function SidebarContent({ user, onNavigate }: { user: User; onNavigate?: () => v
         <Link
           href="/billing"
           onClick={onNavigate}
-          className="block rounded-xl border bg-gradient-to-br from-brand-1/15 via-brand-2/10 to-brand-3/15 p-4 transition-colors hover:border-primary/40"
+          className="block rounded-xl border bg-linear-to-br from-brand-1/15 via-brand-2/10 to-brand-3/15 p-4 transition-colors hover:border-primary/40"
         >
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             Credits
@@ -171,22 +172,30 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-xl lg:hidden">
-          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Open menu">
-                <Menu />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-72 bg-sidebar p-0">
-              <SheetTitle className="sr-only">Menu</SheetTitle>
-              <SidebarContent user={user} onNavigate={() => setSheetOpen(false)} />
-            </SheetContent>
-          </Sheet>
-          <Logo href="/dashboard" />
-          <Link href="/billing" className="rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
-            {user.credits} credits
-          </Link>
+        <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-2 border-b bg-background/80 px-4 backdrop-blur-xl sm:px-8">
+          <div className="flex items-center gap-2 lg:hidden">
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Open menu">
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 bg-sidebar p-0">
+                <SheetTitle className="sr-only">Menu</SheetTitle>
+                <SidebarContent user={user} onNavigate={() => setSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
+            <Logo href="/dashboard" />
+          </div>
+          <div className="ml-auto flex items-center gap-2">
+            <Link
+              href="/billing"
+              className="flex items-center gap-1.5 rounded-full bg-primary/12 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
+            >
+              <Zap className="size-3.5" /> {user.credits} credits
+            </Link>
+            <ThemeToggle />
+          </div>
         </header>
 
         <main className={cn("mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8", track && "pb-28")}>
