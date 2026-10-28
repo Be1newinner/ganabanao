@@ -40,9 +40,17 @@ export function SessionProvider({ children, scope = "user" }: { children: ReactN
     setUser(null);
   }, [scope]);
 
+  // Initial load; signed out (or the API unreachable) both mean "no user"
   useEffect(() => {
-    refresh().catch(() => setUser(null));
-  }, [refresh]);
+    let current = true;
+    api.get<User>(mePath).then(
+      ({ data }) => current && setUser(data),
+      () => current && setUser(null)
+    );
+    return () => {
+      current = false;
+    };
+  }, [mePath]);
 
   const value = useMemo(() => ({ user, refresh, setUser, logout }), [user, refresh, logout]);
   return <SessionContext value={value}>{children}</SessionContext>;
