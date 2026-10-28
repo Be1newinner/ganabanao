@@ -1,0 +1,13 @@
+{
+  "name": "ganabanao",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k -n backend,frontend -c blue,magenta \"pnpm --dir backend dev\" \"pnpm --dir frontend dev\"",
+    "install:all": "pnpm install && pnpm --dir backend install && pnpm --dir frontend install"
+  },
+  "packageManager": "pnpm@11.21.0",
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
+}
