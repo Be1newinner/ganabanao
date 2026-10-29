@@ -18,11 +18,11 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        // Project addition: the sindoor call-to-action (flat pigment, no glow)
+        // Project addition: the primary call-to-action (festival gradient, dark text ≥ 6:1)
         brand:
-          "bg-sindoor text-primary-foreground hover:bg-[color-mix(in_oklab,var(--sindoor),black_14%)]",
-        // Project addition: action placed on the red shell (haldi on sindoor)
-        shell: "bg-haldi text-kajal hover:bg-[color-mix(in_oklab,var(--haldi),black_10%)]",
+          "bg-cta font-semibold text-on-cta shadow-[0_8px_24px_-10px_#ee6a8a] hover:brightness-105 active:brightness-95",
+        // Project addition: same action inside the sidebar
+        shell: "bg-primary text-primary-foreground hover:brightness-110 active:brightness-95",
       },
       size: {
         default:

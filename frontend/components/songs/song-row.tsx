@@ -232,7 +232,7 @@ export function SongRow({
   );
 }
 
-function RenameDialog({
+export function RenameDialog({
   song,
   open,
   onOpenChange,
@@ -288,7 +288,7 @@ function RenameDialog({
   );
 }
 
-function DeleteDialog({
+export function DeleteDialog({
   song,
   open,
   onOpenChange,
