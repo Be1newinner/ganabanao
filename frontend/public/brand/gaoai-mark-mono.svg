@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <title>GaoAI</title>
+
+  <!-- Madhubani Folk Outer Dots (24 dots, r=5, evenly spaced leaving gap at G opening) -->
+  <g id="madhubani-dots" fill="currentColor">
+    <circle cx="488.4" cy="297.0" r="5"/>
+    <circle cx="473.2" cy="348.2" r="5"/>
+    <circle cx="446.7" cy="395.1" r="5"/>
+    <circle cx="410.5" cy="434.4" r="5"/>
+    <circle cx="366.1" cy="464.8" r="5"/>
+    <circle cx="316.3" cy="484.2" r="5"/>
+    <circle cx="263.0" cy="491.9" r="5"/>
+    <circle cx="209.8" cy="487.4" r="5"/>
+    <circle cx="158.9" cy="471.1" r="5"/>
+    <circle cx="112.7" cy="443.5" r="5"/>
+    <circle cx="74.2" cy="406.4" r="5"/>
+    <circle cx="44.8" cy="361.3" r="5"/>
+    <circle cx="26.5" cy="311.1" r="5"/>
+    <circle cx="20.0" cy="257.7" r="5"/>
+    <circle cx="25.7" cy="204.5" r="5"/>
+    <circle cx="43.3" cy="153.6" r="5"/>
+    <circle cx="71.8" cy="108.5" r="5"/>
+    <circle cx="109.7" cy="70.8" r="5"/>
+    <circle cx="155.5" cy="42.5" r="5"/>
+    <circle cx="206.1" cy="25.3" r="5"/>
+    <circle cx="259.7" cy="20.0" r="5"/>
+    <circle cx="312.7" cy="26.9" r="5"/>
+    <circle cx="363.1" cy="45.7" r="5"/>
+    <circle cx="407.7" cy="75.2" r="5"/>
+  </g>
+
+  <!-- Concentric Sound-Wave Arcs forming the 'G' -->
+  <g id="concentric-arcs" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Arc 1: Outermost arc forming the capital 'G' with horizontal crossbar -->
+    <path id="g-outer-arc" d="M 410 135 A 196 196 0 1 0 452 256 L 265 256" stroke-width="40"/>
+
+    <!-- Arc 2: Middle acoustic arc -->
+    <path id="g-middle-arc" d="M 354 158 A 139 139 0 1 0 370 336" stroke-width="26"/>
+
+    <!-- Arc 3: Inner acoustic arc -->
+    <path id="g-inner-arc" d="M 310 179 A 94 94 0 1 0 319 326" stroke-width="16"/>
+  </g>
+
+  <!-- Madhubani Singing Bird Head (Focal Point, ~120px wide) -->
+  <g id="singing-bird">
+    <!-- Head silhouette with open singing beak, leaf crest, and cutout almond eye -->
+    <path id="bird-silhouette" fill-rule="evenodd" d="
+      M 190 218
+      Q 188 244 210 260
+      Q 230 278 255 276
+      L 275 256
+      Q 262 242 255 230
+      L 300 222
+      L 262 215
+      L 308 198
+      L 252 202
+      Q 246 188 230 184
+      Q 224 154 198 146
+      Q 196 172 212 188
+      Q 192 196 190 218 Z
+      M 220 212
+      Q 235 201 250 212
+      Q 235 223 220 212 Z
+    " fill="currentColor"/>
+
+    <!-- Madhubani Eye Dot Pupil -->
+    <circle id="bird-pupil" cx="235" cy="212" r="4.5" fill="currentColor"/>
+  </g>
+
+  <!-- Four-Point AI Sparkle Star (56px tall, inside the G's opening right of the beak) -->
+  <path id="ai-spark" d="M 366 170 Q 366 198 392 198 Q 366 198 366 226 Q 366 198 340 198 Q 366 198 366 170 Z" fill="currentColor"/>
+</svg>

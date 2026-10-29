@@ -1,4 +1,4 @@
-# Design: Night mehfil
+# Design: Night mehfil (GaoAI)
 
 An evening music gathering lit by diya lamps. Chosen with the `design-direction` skill (scored 24/25 against "Kansa studio" 17 and "Ghat at night" 19). Palette built and contrast-checked with `dark-ui-system`; screens follow `music-app-ux`; reviewed with `visual-qa`.
 
@@ -67,3 +67,13 @@ Chosen with `design-direction` (22/25, over "Sound orb" 19 and "3D dholak" 21). 
 - Coloured sidebars, headers or footers; gradients belong to the page atmosphere, the primary action and idea cards only.
 - More than one gradient button competing in a view.
 - `A · B · C` strings, `→` on links, all-caps eyebrows, single highlighted words in headlines.
+
+## Brand: GaoAI
+
+Renamed from GanaBanao on 2026-10-29. "Gao" means "sing" in Bhojpuri and Hindi. The name comes from `SITE_NAME` in `lib/config.ts` (`NEXT_PUBLIC_SITE_NAME` overrides it).
+
+- **Mark** `public/brand/gaoai-mark.svg`: a bold G of three vinyl-groove arcs whose crossbar flows into a singing Madhubani bird, an AI sparkle at the opening, and a ring of folk dots; festival gradient. Made with `agy` (per the global image rule) and reviewed at 16–320px.
+- **Mono** `public/brand/gaoai-mark-mono.svg`: `currentColor`, for one-colour use.
+- **Icon** `public/brand/gaoai-icon.svg` = `app/icon.svg` (favicon): simplified G and bird on a dark rounded square, legible at 16px.
+- **Lockup** `components/brand.tsx` `Logo`: mark + "Gao" in ink and "AI" in the festival gradient, Rozha One.
+- Internal names (database `ganabanao`, R2 bucket, package names, repo folder) are unchanged on purpose.

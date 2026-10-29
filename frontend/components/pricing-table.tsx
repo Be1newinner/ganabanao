@@ -91,7 +91,7 @@ export function PricingTable({
                 <div
                   key={p.id}
                   className={cn(
-                    "relative flex flex-col rounded-2xl border bg-card p-6",
+                    "relative flex flex-col rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#ee6a8a]/40 hover:shadow-[0_24px_60px_-28px_rgb(238_106_138/0.55)]",
                     featured && "border-transparent shadow-2xl shadow-brand-2/15 ring-2 ring-primary/60"
                   )}
                 >
@@ -139,7 +139,7 @@ export function PricingTable({
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {data.packs.map((p) => (
-              <div key={p.id} className="flex flex-col rounded-2xl border bg-card p-5">
+              <div key={p.id} className="flex flex-col rounded-2xl border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#ee6a8a]/40 hover:shadow-[0_24px_60px_-28px_rgb(238_106_138/0.55)]">
                 <h3 className="font-medium">{p.name}</h3>
                 <p className="mt-3 font-display text-3xl font-bold">{formatInr(p.pricePaise)}</p>
                 <p className="mt-1 text-sm font-medium text-primary">{p.credits} credits</p>

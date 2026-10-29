@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>GaoAI</title>
+  <defs>
+    <linearGradient id="gaoai-icon-grad" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f6b444"/>
+      <stop offset="33%" stop-color="#f2785a"/>
+      <stop offset="67%" stop-color="#ee6a8a"/>
+      <stop offset="100%" stop-color="#7c52f0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- App Icon Background -->
+  <rect width="64" height="64" rx="14" fill="#16131a"/>
+
+  <!-- Thick Capital 'G' Arc with Crossbar (stroke ~7) -->
+  <path d="M 48 18.5 A 21 21 0 1 0 53 32 L 33 32" fill="none" stroke="url(#gaoai-icon-grad)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Solid Bird-Head Silhouette with Open Beak and Crest -->
+  <path d="M 22 27 C 22 31 24 34 28 35 L 34 32 C 33 30.5 33 29.5 38 29 L 33 27 L 39 25 C 34 24 33 23 30 21 C 28 17 25 15 24 16 C 24 18 25 20 26 22 C 23 23 22 25 22 27 Z" fill="url(#gaoai-icon-grad)"/>
+
+  <!-- Small Dark Eye (Reads sharply at 16px) -->
+  <circle cx="29" cy="26" r="1.5" fill="#16131a"/>
+</svg>

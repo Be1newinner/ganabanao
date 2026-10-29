@@ -56,7 +56,7 @@ function SidebarContent({ user, onNavigate }: { user: User; onNavigate?: () => v
 
   return (
     <div className="flex h-full flex-col px-3 py-5">
-      <Logo href="/dashboard" className="px-3 text-gold" />
+      <Logo href="/dashboard" className="px-2" size={34} />
 
       {/* Raised, not gold: the page's own primary action is the only gold one (visual-qa) */}
       <Button
@@ -198,7 +198,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <SidebarContent user={user} onNavigate={() => setSheetOpen(false)} />
                 </SheetContent>
               </Sheet>
-              <Logo href="/dashboard" className="text-2xl text-gold" />
+              <Logo href="/dashboard" className="text-2xl" size={28} />
             </div>
             <div className="ml-auto flex items-center gap-2">
               <Link href="/billing" className="text-sm text-ink-2 hover:text-ink lg:hidden">

@@ -7,7 +7,23 @@ import { cn } from "@/lib/utils";
  * the song's id so a song always keeps the same cover. Add a painting by
  * dropping the file in that folder and listing it here.
  */
-export const COVERS = ["fish-1-v2", "peacock-1-v2", "fish-2-v2", "peacock-2-v2", "fish-3-v2", "peacock-3-v2"];
+export const COVERS = [
+  "fish-1-v2",
+  "sun-v1",
+  "peacock-1-v2",
+  "tree-of-life-v1",
+  "elephant-v1",
+  "kajri-swing-v1",
+  "chhath-v1",
+  "fish-2-v2",
+  "dholak-v1",
+  "lotus-v1",
+  "parrots-v1",
+  "peacock-2-v2",
+  "holi-v1",
+  "fish-3-v2",
+  "peacock-3-v2",
+];
 
 const hash = (s: string): number => {
   let h = 2166136261;

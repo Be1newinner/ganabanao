@@ -319,3 +319,139 @@ export function ScrollProgress() {
   }, []);
   return <div ref={ref} aria-hidden className="fixed inset-x-0 top-0 z-50 h-0.5 origin-left scale-x-0 bg-cta" />;
 }
+
+// ─── Spotlight card ───────────────────────────────────────────────────────────
+
+/**
+ * A card whose 1px border lights up in festival colours where the cursor is,
+ * with a soft glow inside. Children sit on the card surface.
+ */
+export function SpotlightCard({ children, className, innerClassName }: { children: ReactNode; className?: string; innerClassName?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  return (
+    <div
+      ref={ref}
+      onPointerMove={(e) => {
+        const el = ref.current;
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        el.style.setProperty("--sx", `${e.clientX - r.left}px`);
+        el.style.setProperty("--sy", `${e.clientY - r.top}px`);
+      }}
+      style={{
+        background:
+          "radial-gradient(360px circle at var(--sx, 50%) var(--sy, 0%), rgb(238 106 138 / 0.75), rgb(124 82 240 / 0.35) 35%, var(--hairline) 70%)",
+      }}
+      className={cn("group/spot relative rounded-3xl p-px", className)}
+    >
+      <div className={cn("relative h-full overflow-hidden rounded-[calc(1.5rem-1px)] bg-surface-1", innerClassName)}>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover/spot:opacity-100"
+          style={{ background: "radial-gradient(300px circle at var(--sx, 50%) var(--sy, 0%), rgb(246 180 68 / 0.10), transparent 60%)" }}
+        />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ─── Count up ─────────────────────────────────────────────────────────────────
+
+/** Counts from 0 to `to` when scrolled into view. `time` formats seconds as m:ss. */
+export function CountUp({ to, format = "int", className }: { to: number; format?: "int" | "time"; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const reduced = useReducedMotion();
+  const show = (v: number) => (format === "time" ? `${Math.floor(v / 60)}:${String(Math.round(v % 60)).padStart(2, "0")}` : String(Math.round(v)));
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (reduced) {
+      el.textContent = show(to);
+      return;
+    }
+    el.textContent = show(0);
+    let frame = 0;
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      io.disconnect();
+      const start = performance.now();
+      const run = (now: number) => {
+        const p = Math.min(1, (now - start) / 1400);
+        el.textContent = show(to * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) frame = requestAnimationFrame(run);
+      };
+      frame = requestAnimationFrame(run);
+    });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(frame);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `show` is derived from `format`
+  }, [to, format, reduced]);
+
+  return (
+    <span ref={ref} className={className}>
+      {show(to)}
+    </span>
+  );
+}
+
+// ─── Magnetic ─────────────────────────────────────────────────────────────────
+
+/** Pulls its child gently toward the cursor while hovered (mouse only). */
+export function Magnetic({ children, strength = 0.3, className }: { children: ReactNode; strength?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  return (
+    <div
+      ref={ref}
+      onPointerMove={(e) => {
+        const el = ref.current;
+        if (!el || reduced || e.pointerType !== "mouse") return;
+        const r = el.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2);
+        const dy = e.clientY - (r.top + r.height / 2);
+        el.style.transform = `translate(${dx * strength}px, ${dy * strength}px)`;
+      }}
+      onPointerLeave={() => {
+        if (ref.current) ref.current.style.transform = "";
+      }}
+      className={cn("inline-block transition-transform duration-300 ease-out", className)}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ─── Scroll velocity ──────────────────────────────────────────────────────────
+
+/** Writes the page's scroll speed (-1…1, eased) to `--velocity` on the element. */
+export function ScrollVelocity({ children, className }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reduced) return;
+    let last = window.scrollY;
+    let v = 0;
+    let frame = 0;
+    const loop = () => {
+      const y = window.scrollY;
+      const target = Math.max(-1, Math.min(1, (y - last) / 40));
+      last = y;
+      v += (target - v) * 0.1;
+      el.style.setProperty("--velocity", v.toFixed(3));
+      frame = requestAnimationFrame(loop);
+    };
+    frame = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(frame);
+  }, [reduced]);
+  return (
+    <div ref={ref} className={className}>
+      {children}
+    </div>
+  );
+}

@@ -49,7 +49,7 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-7xl px-4 pt-16 sm:px-6">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr]">
           <div className="max-w-sm">
-            <Logo className="text-3xl text-gold" />
+            <Logo className="text-4xl" size={48} />
             <p className="mt-4 leading-relaxed text-ink-2">
               An AI music studio for Bhojpuri songs. Write the words, choose the feel, and hear your song in minutes.
             </p>
@@ -94,7 +94,7 @@ export function SiteFooter() {
       {/* The wordmark, very large, fading into the floor */}
       <p
         aria-hidden
-        className="pointer-events-none relative -mb-[0.2em] text-center font-display text-[15.5vw] leading-none whitespace-nowrap text-festival opacity-90 select-none [mask-image:linear-gradient(to_bottom,black_35%,transparent_95%)]"
+        className="pointer-events-none relative -mb-[0.2em] text-center font-display text-[25vw] leading-none whitespace-nowrap text-festival opacity-90 select-none [mask-image:linear-gradient(to_bottom,black_35%,transparent_95%)]"
       >
         {SITE_NAME}
       </p>

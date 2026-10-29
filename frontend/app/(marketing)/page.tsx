@@ -2,7 +2,20 @@ import { Check, ChevronDown, Layers, PenLine, Play, Repeat2, Sparkles } from "lu
 import Image from "next/image";
 import Link from "next/link";
 import { COVERS } from "@/components/cover-art";
-import { CursorGlow, Parallax, Reveal, TiltCard, TypedPrompt, Typewriter } from "@/components/landing/motion";
+import {
+  CountUp,
+  CursorGlow,
+  Magnetic,
+  Parallax,
+  Reveal,
+  ScrollVelocity,
+  SpotlightCard,
+  TiltCard,
+  TypedPrompt,
+  Typewriter,
+} from "@/components/landing/motion";
+import { PromptBuilder } from "@/components/landing/prompt-builder";
+import { StepTrack } from "@/components/landing/step-track";
 import { StemsMixer } from "@/components/landing/stems-mixer";
 import { Vinyl } from "@/components/landing/vinyl";
 import { PricingTable } from "@/components/pricing-table";
@@ -25,11 +38,11 @@ const PROMPTS = [
 
 const MARQUEE = ["Kajri", "Chaita", "Holi", "Chhath geet", "Sohar", "Purvi", "Biraha", "Jhumar", "Nirgun", "Bhajan", "Lok geet", "Vivah geet"];
 
-const FACTS = [
-  ["5:30", "full songs, not 30-second clips"],
-  ["12", "stems from any song you make"],
-  ["2", "languages: Bhojpuri and Hindi"],
-  ["0", "credits lost when a song fails"],
+const FACTS: { value: number; format?: "time"; label: string }[] = [
+  { value: 330, format: "time", label: "full songs, not 30-second clips" },
+  { value: 12, label: "stems from any song you make" },
+  { value: 2, label: "languages: Bhojpuri and Hindi" },
+  { value: 0, label: "credits lost when a song fails" },
 ];
 
 const TOOLS = [
@@ -61,12 +74,6 @@ const STEPS = [
   { title: "Choose the feel", body: "Pick the genre, mood, taal, voice and instruments. Kajri in Keherwa with dholak and bansuri? Yes." },
   { title: "Listen and take it home", body: "Play your full song in minutes. Download the MP3, or split it into stems for the studio." },
 ];
-
-const CHIPS = {
-  Taal: ["Keherwa", "Dadra", "Rupak", "Teentaal", "Deepchandi"],
-  Instruments: ["Dholak", "Harmonium", "Bansuri", "Shehnai", "Nal", "Jhaal", "Tabla"],
-  Mood: ["Romantic", "Festive", "Devotional", "Sad", "Energetic"],
-};
 
 const FAQ = [
   {
@@ -165,28 +172,50 @@ export default function LandingPage() {
           </Reveal>
         </div>
 
-        {/* Facts — all true of the product */}
-        <div className="relative mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline sm:mx-6 lg:grid-cols-4 xl:mx-auto">
-          {FACTS.map(([n, label], i) => (
-            <Reveal key={label} delay={i * 80} className="bg-bg p-5 sm:p-6">
-              <p className="font-display text-4xl text-gold sm:text-5xl">{n}</p>
-              <p className="mt-1 text-sm text-ink-2">{label}</p>
+        {/* Facts — all true of the product; numbers count up when seen */}
+        <div className="relative mx-auto grid max-w-7xl grid-cols-2 gap-3 px-4 sm:px-6 lg:grid-cols-4 lg:gap-4">
+          {FACTS.map((f, i) => (
+            <Reveal key={f.label} delay={i * 80}>
+              <SpotlightCard className="h-full" innerClassName="p-5 sm:p-6">
+                <p className="font-display text-4xl text-gold sm:text-5xl">
+                  <CountUp to={f.value} format={f.format} />
+                </p>
+                <p className="mt-1 text-sm text-ink-2">{f.label}</p>
+              </SpotlightCard>
             </Reveal>
           ))}
         </div>
       </section>
 
-      {/* ── Genre marquee ── */}
-      <section aria-label="Styles you can make" className="relative mt-20 overflow-hidden py-6 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-        <div className="flex w-max animate-marquee gap-10 motion-reduce:animate-none">
-          {[...MARQUEE, ...MARQUEE].map((g, i) => (
-            <span key={i} className="flex items-center gap-10 font-display text-4xl text-ink/80 sm:text-5xl">
-              {g}
-              <span aria-hidden className="size-2.5 rounded-full bg-cta" />
-            </span>
-          ))}
-        </div>
-      </section>
+      {/* ── Genre marquee: two rows, opposite ways, leaning with scroll speed ── */}
+      <ScrollVelocity className="relative mt-20 space-y-4 overflow-hidden py-6 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
+        {[0, 1].map((row) => (
+          <div key={row} aria-hidden={row === 1} className="[transform:skewX(calc(var(--velocity,0)*-8deg))]">
+            <div
+              className={
+                row === 0
+                  ? "flex w-max animate-marquee gap-10 hover:[animation-play-state:paused] motion-reduce:animate-none"
+                  : "flex w-max animate-marquee-reverse gap-10 hover:[animation-play-state:paused] motion-reduce:animate-none"
+              }
+            >
+              {[...MARQUEE, ...MARQUEE].map((g, i) => (
+                <span
+                  key={i}
+                  className={
+                    row === 0
+                      ? "flex items-center gap-10 font-display text-4xl text-ink/85 sm:text-6xl"
+                      : "flex items-center gap-10 font-display text-4xl text-transparent [-webkit-text-stroke:1px_rgb(242_236_227/0.35)] sm:text-6xl"
+                  }
+                >
+                  {g}
+                  <span aria-hidden className="size-2.5 rounded-full bg-cta" />
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+        <p className="sr-only">Styles you can make: {MARQUEE.join(", ")}</p>
+      </ScrollVelocity>
 
       {/* ── Three tools ── */}
       <section id="tools" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-24 sm:px-6">
@@ -200,17 +229,17 @@ export default function LandingPage() {
           {TOOLS.map(({ icon: Icon, art, title, body, points }, i) => (
             <Reveal key={title} delay={i * 120}>
               <TiltCard className="h-full rounded-3xl">
-                <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-hairline bg-surface-1">
+                <SpotlightCard className="h-full" innerClassName="flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
                       src={art}
                       alt=""
                       fill
                       sizes="(min-width: 768px) 33vw, 100vw"
-                      className="object-cover transition-transform duration-700 group-hover/tilt:scale-105"
+                      className="scale-110 object-cover transition-transform duration-700 ease-out group-hover/tilt:translate-x-[calc((var(--mx,50%)-50%)*-0.08)] group-hover/tilt:translate-y-[calc((var(--my,50%)-50%)*-0.08)] group-hover/tilt:scale-[1.18]"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-surface-1 via-surface-1/20 to-transparent" />
-                    <span className="absolute bottom-4 left-5 grid size-11 place-items-center rounded-full bg-cta text-on-cta shadow-lg">
+                    <span className="absolute bottom-4 left-5 grid size-11 place-items-center rounded-full bg-cta text-on-cta shadow-lg transition-transform duration-500 group-hover/tilt:-translate-y-1 group-hover/tilt:rotate-[-8deg]">
                       <Icon className="size-5" />
                     </span>
                   </div>
@@ -225,36 +254,28 @@ export default function LandingPage() {
                       ))}
                     </ul>
                   </div>
-                </div>
+                </SpotlightCard>
               </TiltCard>
             </Reveal>
           ))}
         </div>
       </section>
 
-      {/* ── How it works (a real sequence, so numbered) ── */}
-      <section id="how" className="relative scroll-mt-24 border-y border-hairline bg-sunken/60 py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      {/* ── How it works: a real sequence, on a line that fills as you scroll ── */}
+      <section id="how" className="relative scroll-mt-24 overflow-hidden border-y border-hairline bg-sunken/60 py-24">
+        <Parallax speed={-0.12} className="pointer-events-none absolute -top-32 -left-32 size-[420px] rounded-full bg-[#7c52f0]/15 blur-3xl">
+          <span />
+        </Parallax>
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
           <Reveal>
             <h2 className="font-display text-4xl sm:text-5xl">From words to a song in three steps</h2>
           </Reveal>
-          <ol className="relative mt-14 grid gap-10 md:grid-cols-3">
-            <span aria-hidden className="absolute top-7 right-[16%] left-[16%] hidden h-px bg-linear-to-r from-[#f6b444] via-[#ee6a8a] to-[#7c52f0] opacity-50 md:block" />
-            {STEPS.map((s, i) => (
-              <Reveal as="li" key={s.title} delay={i * 150} className="relative">
-                <span className="relative z-10 grid size-14 place-items-center rounded-full border border-hairline bg-surface-2 font-display text-2xl text-gold shadow-[0_0_40px_-8px_#ee6a8a]">
-                  {i + 1}
-                </span>
-                <h3 className="mt-6 font-display text-2xl">{s.title}</h3>
-                <p className="mt-2 max-w-sm leading-relaxed text-ink-2">{s.body}</p>
-              </Reveal>
-            ))}
-          </ol>
+          <StepTrack steps={STEPS} />
         </div>
       </section>
 
-      {/* ── Stems ── */}
-      <section id="stems" className="mx-auto grid max-w-7xl scroll-mt-24 items-center gap-12 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
+      {/* ── Stems: a playable demo ── */}
+      <section id="stems" className="relative mx-auto grid max-w-7xl scroll-mt-24 items-center gap-12 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
         <Reveal>
           <h2 className="font-display text-4xl leading-tight sm:text-5xl">Every instrument on its own track</h2>
           <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink-2">
@@ -262,7 +283,8 @@ export default function LandingPage() {
             MIDI files to finish your mix in any studio app.
           </p>
           <p className="mt-4 max-w-lg text-ink-3">
-            Stems are made once per song and kept for 30 days. Later downloads of the same stems are free.
+            Try it: press play on the demo groove and mute the stems one by one. Stems are made once per song and kept for
+            30 days.
           </p>
         </Reveal>
         <Reveal delay={150}>
@@ -270,62 +292,61 @@ export default function LandingPage() {
         </Reveal>
       </section>
 
-      {/* ── Made for Bhojpuri ── */}
+      {/* ── Made for Bhojpuri: build a prompt, beside a 3D wall of covers ── */}
       <section className="relative overflow-hidden border-y border-hairline bg-sunken/60">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-24 sm:px-6 lg:grid-cols-2">
           <Reveal>
             <h2 className="font-display text-4xl leading-tight sm:text-5xl">Made for Bhojpuri, from the taal up</h2>
-            <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink-2">
-              Choose the rhythm cycle, the instruments of the village mehfil and the mood of the occasion. Your choices
-              shape every song.
+            <p className="mt-5 mb-8 max-w-lg text-lg leading-relaxed text-ink-2">
+              Pick the rhythm cycle, the instruments of the village mehfil and the mood of the occasion. Watch your song
+              take shape.
             </p>
-            <div className="mt-8 space-y-5">
-              {Object.entries(CHIPS).map(([group, items]) => (
-                <div key={group}>
-                  <p className="mb-2 text-sm font-semibold text-ink">{group}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {items.map((item) => (
-                      <span key={item} className="rounded-full border border-hairline bg-surface-1 px-3 py-1.5 text-sm text-ink-2">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <PromptBuilder />
           </Reveal>
 
-          {/* Parallax wall of covers */}
-          <div aria-hidden className="relative h-[460px] [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] sm:h-[560px]">
-            <div className="absolute inset-0 grid grid-cols-3 gap-4">
-              {[0.12, -0.1, 0.16].map((speed, col) => (
-                <Parallax key={col} speed={speed} className="space-y-4">
-                  {[0, 1, 2, 3].map((row) => {
-                    const cover = COVERS[(col * 2 + row) % COVERS.length];
-                    return (
-                      <div key={row} className="overflow-hidden rounded-2xl ring-1 ring-white/10">
-                        <Image src={`/art/covers/${cover}.jpg`} alt="" width={220} height={220} className="aspect-square w-full object-cover" />
-                      </div>
-                    );
-                  })}
-                </Parallax>
-              ))}
+          <div aria-hidden className="relative h-[460px] [perspective:1100px] sm:h-[600px]">
+            <div className="absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)]">
+              <div className="grid h-full grid-cols-3 gap-4 [transform:rotateX(18deg)_rotateZ(-6deg)_scale(1.08)] [transform-style:preserve-3d]">
+                {[0.12, -0.1, 0.16].map((speed, col) => (
+                  <Parallax key={col} speed={speed} className="space-y-4">
+                    {[0, 1, 2, 3].map((row) => {
+                      const cover = COVERS[(col * 2 + row) % COVERS.length];
+                      return (
+                        <div
+                          key={row}
+                          className="overflow-hidden rounded-2xl shadow-[0_20px_40px_-20px_rgb(0_0_0/0.8)] ring-1 ring-white/10 transition-transform duration-500 hover:[transform:translateZ(40px)_scale(1.04)]"
+                        >
+                          <Image src={`/art/covers/${cover}.jpg`} alt="" width={220} height={220} className="aspect-square w-full object-cover" />
+                        </div>
+                      );
+                    })}
+                  </Parallax>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ── Pricing ── */}
-      <section id="pricing" className="relative mx-auto max-w-7xl scroll-mt-24 px-4 py-24 sm:px-6">
-        <Reveal className="mb-14 text-center">
-          <h2 className="font-display text-4xl sm:text-5xl">Simple, credit-based pricing</h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-ink-2">
-            Every song, similar song and stem download uses credits. Choose a monthly plan or top up with a pack.
-          </p>
-        </Reveal>
-        <Reveal delay={120}>
-          <PricingTable />
-        </Reveal>
+      <section id="pricing" className="relative scroll-mt-24 overflow-hidden py-24">
+        <Parallax speed={0.1} className="pointer-events-none absolute top-20 -right-40 size-[520px] rounded-full bg-[#ee6a8a]/12 blur-3xl">
+          <span />
+        </Parallax>
+        <Parallax speed={-0.08} className="pointer-events-none absolute bottom-0 -left-40 size-[460px] rounded-full bg-[#f6b444]/10 blur-3xl">
+          <span />
+        </Parallax>
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+          <Reveal className="mb-14 text-center">
+            <h2 className="font-display text-4xl sm:text-5xl">Simple, credit-based pricing</h2>
+            <p className="mx-auto mt-4 max-w-xl text-lg text-ink-2">
+              Every song, similar song and stem download uses credits. Choose a monthly plan or top up with a pack.
+            </p>
+          </Reveal>
+          <Reveal delay={120}>
+            <PricingTable />
+          </Reveal>
+        </div>
       </section>
 
       {/* ── FAQ ── */}
@@ -333,13 +354,15 @@ export default function LandingPage() {
         <Reveal>
           <h2 className="text-center font-display text-4xl sm:text-5xl">Questions and answers</h2>
         </Reveal>
-        <div className="mt-10 divide-y divide-hairline rounded-2xl border border-hairline bg-surface-1/60">
+        <div className="mt-10 space-y-3">
           {FAQ.map((item, i) => (
             <Reveal key={item.q} delay={i * 60}>
-              <details className="group px-5 py-1 sm:px-6">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-left font-medium [&::-webkit-details-marker]:hidden">
+              <details className="faq group rounded-2xl border border-hairline bg-surface-1/60 px-5 transition-colors open:border-[#ee6a8a]/40 open:bg-surface-1 hover:border-ink-3/40 sm:px-6">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left font-medium [&::-webkit-details-marker]:hidden">
                   {item.q}
-                  <ChevronDown className="size-5 shrink-0 text-ink-3 transition-transform group-open:rotate-180" />
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-surface-2 transition-all duration-300 group-open:rotate-180 group-open:bg-cta group-open:text-on-cta">
+                    <ChevronDown className="size-4" />
+                  </span>
                 </summary>
                 <p className="pb-5 leading-relaxed text-ink-2">{item.a}</p>
               </details>
@@ -351,20 +374,28 @@ export default function LandingPage() {
       {/* ── Final call to action ── */}
       <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(115deg,#a8431a,#c2366c_40%,#6d3fd9_75%,#3b2a8f)] bg-[length:200%_100%] px-6 py-16 text-center text-white animate-gradient-pan sm:px-12 sm:py-20">
-            <div aria-hidden className="absolute -top-24 -left-24 size-72 rounded-full bg-[#f6b444]/30 blur-3xl" />
-            <div aria-hidden className="absolute -right-20 -bottom-28 size-80 rounded-full bg-[#ee6a8a]/30 blur-3xl" />
-            <h2 className="relative mx-auto max-w-3xl font-display text-4xl leading-tight sm:text-6xl">Your next song is one line away</h2>
-            <p className="relative mx-auto mt-5 max-w-xl text-lg text-white/85">
-              Sign up with your email or Google account and start creating. Songs are made by AI, and every try sounds a
-              little different.
-            </p>
-            <Button size="xl" className="relative mt-9 h-12 rounded-full bg-white px-8 text-base text-[#1b1407] hover:bg-white/90" asChild>
-              <Link href="/signup">
-                <Sparkles /> Start creating
-              </Link>
-            </Button>
-          </div>
+          <SpotlightCard className="rounded-[2rem]" innerClassName="rounded-[calc(2rem-1px)] bg-transparent">
+            <div className="relative overflow-hidden bg-[linear-gradient(115deg,#a8431a,#c2366c_40%,#6d3fd9_75%,#3b2a8f)] bg-[length:200%_100%] px-6 py-16 text-center text-white animate-gradient-pan sm:px-12 sm:py-20">
+              <Parallax speed={-0.15} className="absolute -top-24 -left-24 size-72 rounded-full bg-[#f6b444]/30 blur-3xl">
+                <span />
+              </Parallax>
+              <Parallax speed={0.12} className="absolute -right-20 -bottom-28 size-80 rounded-full bg-[#ee6a8a]/30 blur-3xl">
+                <span />
+              </Parallax>
+              <h2 className="relative mx-auto max-w-3xl font-display text-4xl leading-tight sm:text-6xl">Your next song is one line away</h2>
+              <p className="relative mx-auto mt-5 max-w-xl text-lg text-white/85">
+                Sign up with your email or Google account and start creating. Songs are made by AI, and every try sounds a
+                little different.
+              </p>
+              <Magnetic strength={0.35} className="relative mt-9">
+                <Button size="xl" className="h-12 rounded-full bg-white px-8 text-base text-[#1b1407] shadow-[0_12px_40px_-10px_rgb(255_255_255/0.6)] hover:bg-white/90" asChild>
+                  <Link href="/signup">
+                    <Sparkles /> Start creating
+                  </Link>
+                </Button>
+              </Magnetic>
+            </div>
+          </SpotlightCard>
         </Reveal>
       </section>
     </div>
